@@ -1,4 +1,6 @@
-import java.util.concurrent.Callable;
+package randalgos.math;
+
+import randalgos.math.Equation;
 
 /**
  * William Trent Holliday

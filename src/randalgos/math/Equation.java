@@ -1,3 +1,5 @@
+package randalgos.math;
+
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 
@@ -11,7 +13,7 @@ import javafx.beans.property.SimpleStringProperty;
  *
  * This equation wrapper only allows for equations that have one variable.
  */
-abstract class Equation{
+public abstract class Equation{
     public SimpleStringProperty equationName;
     public SimpleDoubleProperty actual_area;
 
@@ -28,17 +30,17 @@ abstract class Equation{
      *              Math.pow(x, 2)
      * @return the result of computing the function at the specified x location.
      */
-    abstract double calculate(double x);
+    public abstract double calculate(double x);
 
     /**
      * The furthest x position that will be used to calculate the area.
      * @return a double
      */
-    abstract double x_max();
+    public abstract double x_max();
 
     /**
      * The biggest y position that the function contains in the range of x positions.
      * @return a double
      */
-    abstract double y_max();
+    public abstract double y_max();
 }

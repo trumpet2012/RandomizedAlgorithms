@@ -1,5 +1,8 @@
+package randalgos.result;
+
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import randalgos.math.Equation;
 
 /**
  * William Trent Holliday
@@ -9,9 +12,9 @@ import javafx.beans.property.SimpleIntegerProperty;
  */
 public class MonteCarloResult {
 
-    Equation equation;
-    SimpleIntegerProperty num_times;    // We use Simple properties here so that it is easy to load the information
-    SimpleDoubleProperty approx_result; // into a JavaFX table.
+    public Equation equation;
+    public SimpleIntegerProperty num_times;    // We use Simple properties here so that it is easy to load the information
+    public SimpleDoubleProperty approx_result; // into a JavaFX table.
 
     /**
      * Create a new instance which will hold the results of running the given equation the specified number of times.

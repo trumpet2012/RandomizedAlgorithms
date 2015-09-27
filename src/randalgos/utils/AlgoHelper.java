@@ -1,3 +1,5 @@
+package randalgos.utils;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -8,19 +10,19 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class AlgoHelper {
 
-    protected static void swap(int[] arr, int left, int right){
+    public static void swap(int[] arr, int left, int right){
         int temp = arr[left];
         arr[left] = arr[right];
         arr[right] = temp;
     }
 
-    protected static int rand_partition(int[] arr, int lower, int upper){
+    public static int rand_partition(int[] arr, int lower, int upper){
         int rand_index = random_number(lower, upper);
         swap(arr, lower, rand_index);
         return partition(arr, lower, upper);
     }
 
-    protected static int partition(int[] arr, int lower, int upper){
+    public static int partition(int[] arr, int lower, int upper){
         int pivot = arr[lower];
         int lowerIndex = lower - 1;
         int upperIndex = upper + 1;
@@ -47,7 +49,7 @@ public class AlgoHelper {
         }
     }
 
-    protected static int random_number(int min, int max){
+    public static int random_number(int min, int max){
         return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 

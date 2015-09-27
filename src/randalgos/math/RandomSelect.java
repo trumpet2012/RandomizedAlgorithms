@@ -1,3 +1,8 @@
+package randalgos.math;
+
+import randalgos.utils.AlgoHelper;
+import randalgos.result.AlgoResult;
+
 /**
  * William Trent Holliday
  * 9/26/15

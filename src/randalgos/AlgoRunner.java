@@ -1,5 +1,4 @@
-
-import javafx.scene.control.TableCell;
+package randalgos;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -11,6 +10,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import randalgos.math.Equation;
+import randalgos.math.MonteCarlo;
+import randalgos.math.RandomSelect;
+import randalgos.result.AlgoResult;
+import randalgos.result.MonteCarloResult;
+import randalgos.utils.table.EquationCell;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -39,49 +44,49 @@ public class AlgoRunner extends Application {
         Equation[] equation_list = {
                 new Equation("${\\tiny \\int_{0}^{5} x^{2}\\, dx}$", 41.667) {
                     @Override
-                    double calculate(double x) {
+                    public double calculate(double x) {
                         return Math.pow(x, 2);
                     }
 
                     @Override
-                    double x_max() {
+                    public double x_max() {
                         return 5;
                     }
 
                     @Override
-                    double y_max() {
+                    public double y_max() {
                         return 25;
                     }
                 },
                 new Equation("${\\tiny \\int_{0}^{5} x^{3}\\, dx}$", 156.25) {
                     @Override
-                    double calculate(double x) {
+                    public double calculate(double x) {
                         return Math.pow(x, 3);
                     }
 
                     @Override
-                    double x_max() {
+                    public double x_max() {
                         return 5;
                     }
 
                     @Override
-                    double y_max() {
+                    public double y_max() {
                         return 125;
                     }
                 },
                 new Equation("${\\tiny \\int_{1}^{10} \\ln{x}\\,dx}$", 14.026) {
                     @Override
-                    double calculate(double x) {
+                    public double calculate(double x) {
                         return Math.log(x);
                     }
 
                     @Override
-                    double x_max() {
+                    public double x_max() {
                         return 10;
                     }
 
                     @Override
-                    double y_max() {
+                    public double y_max() {
                         return 2.30259;
                     }
                 }

@@ -1,3 +1,5 @@
+package randalgos.utils.table;
+
 import javafx.geometry.Pos;
 import javafx.scene.control.TableCell;
 import javafx.scene.image.ImageView;
@@ -5,6 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
+import randalgos.result.MonteCarloResult;
 
 import java.awt.*;
 

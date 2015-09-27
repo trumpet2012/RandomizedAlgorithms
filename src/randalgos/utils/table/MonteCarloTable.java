@@ -1,3 +1,5 @@
+package randalgos.utils.table;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 

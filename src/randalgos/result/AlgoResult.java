@@ -1,3 +1,5 @@
+package randalgos.result;
+
 /**
  * William Trent Holliday
  * 9/26/15
