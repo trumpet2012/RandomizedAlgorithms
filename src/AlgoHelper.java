@@ -3,6 +3,8 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * William Trent Holliday
  * 9/26/15
+ *
+ * Contains helper methods that are useful for the random select algorithm.
  */
 public class AlgoHelper {
 
