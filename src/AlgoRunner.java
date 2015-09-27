@@ -136,33 +136,29 @@ public class AlgoRunner extends Application {
                         table.setPrefHeight(newValue.doubleValue() - 27)
         );
 
-        TableColumn<MonteCarloResult, String> equation = new TableColumn<MonteCarloResult, String>("Equation");
+        TableColumn<MonteCarloResult, String> equation = new TableColumn<>("Equation");
         equation.setCellValueFactory(
                 (param) ->
                     param.getValue().equation.equationName
         );
         equation.setCellFactory(
-                (param) -> {
-                    TableCell<MonteCarloResult, String> cell = new MonteCarloCell();
-                    return cell;
-                }
+                (param) ->
+                    new EquationCell()
         );
 
-        ArrayList<TableColumn<MonteCarloResult, String>> execution_number_list = new ArrayList<>();
-
-        TableColumn<MonteCarloResult, Integer> number_of_times = new TableColumn<MonteCarloResult, Integer>("# Of Guesses");
+        TableColumn<MonteCarloResult, Integer> number_of_times = new TableColumn<>("# Of Guesses");
         number_of_times.setCellValueFactory(
                 (param) ->
                     param.getValue().num_times.asObject()
         );
 
-        TableColumn<MonteCarloResult, Double> approx_result = new TableColumn<MonteCarloResult, Double>("Approx. Area");
+        TableColumn<MonteCarloResult, Double> approx_result = new TableColumn<>("Approx. Area");
         approx_result.setCellValueFactory(
                 (param) ->
                     param.getValue().approx_result.asObject()
             );
 
-        TableColumn<MonteCarloResult, Double> actual_result = new TableColumn<MonteCarloResult, Double>("Exact Area");
+        TableColumn<MonteCarloResult, Double> actual_result = new TableColumn<>("Exact Area");
         actual_result.setCellValueFactory(
                 (param) ->
                     param.getValue().equation.actual_area.asObject()
