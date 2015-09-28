@@ -24,40 +24,14 @@ import java.util.concurrent.ThreadLocalRandom;
  * William Trent Holliday
  * 9/26/15
  */
-public class AlgoRunner extends Application {
+public class MonteCarloRunner extends Application {
 
     public static void main(String[] args){
-        RandomSelect random_select = new RandomSelect();
-
-        AlgoResult[] results = new AlgoResult[number_of_elements.length];
-        int position = 3; // Third smallest
-
-        for (int i = 0; i < results.length; i++){
-            int[] arr = rand_array(number_of_elements[i]);
-            results[i] = random_select.execute(arr, position);
-        }
-
         // Object that will be used to compute the area under the curves
         MonteCarlo monte_carlo = new MonteCarlo();
 
         // The list of equations to perform the monte carlo method on to get the approximate area under the curve.
         Equation[] equation_list = {
-                new Equation("${\\tiny \\int_{0}^{5} x^{2}\\, dx}$", 41.667) {
-                    @Override
-                    public double calculate(double x) {
-                        return Math.pow(x, 2);
-                    }
-
-                    @Override
-                    public double x_max() {
-                        return 5;
-                    }
-
-                    @Override
-                    public double y_max() {
-                        return 25;
-                    }
-                },
                 new Equation("${\\tiny \\int_{0}^{5} x^{3}\\, dx}$", 156.25) {
                     @Override
                     public double calculate(double x) {
@@ -89,6 +63,22 @@ public class AlgoRunner extends Application {
                     public double y_max() {
                         return 2.30259;
                     }
+                },
+                new Equation("${\\tiny \\int_{0}^{2} x^{2} + \\sqrt[5]{x}\\, dx}$", 4.5812) {
+                    @Override
+                    public double calculate(double x) {
+                        return Math.pow(x, 2) + Math.pow(x, 1/5);
+                    }
+
+                    @Override
+                    public double x_max() {
+                        return 2;
+                    }
+
+                    @Override
+                    public double y_max() {
+                        return 4 + Math.pow(2, 1/5);
+                    }
                 }
         };
 
@@ -106,19 +96,6 @@ public class AlgoRunner extends Application {
         launch(args);
     }
 
-    private static int[] rand_array(int size){
-        int min_rand = 0;
-        int max_rand = 100000;
-
-        int[] arr = new int[size];
-        for (int i = 0; i < size; i++){
-            arr[i] = ThreadLocalRandom.current().nextInt(min_rand, max_rand);
-        }
-
-        return arr;
-    }
-
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         Scene scene = new Scene(new Group());
@@ -126,8 +103,11 @@ public class AlgoRunner extends Application {
         int width = 800;
         int height = 650;
 
+        primaryStage.setTitle("Monte Carlo Algorithm - Area Under Curve");
+
         primaryStage.setWidth(width);
         primaryStage.setHeight(height);
+
         table.setPrefWidth(width);
         table.setPrefHeight(height);
 
@@ -148,7 +128,7 @@ public class AlgoRunner extends Application {
         );
         equation.setCellFactory(
                 (param) ->
-                    new EquationCell()
+                        new EquationCell()
         );
 
         TableColumn<MonteCarloResult, Integer> number_of_times = new TableColumn<>("# Of Guesses");
@@ -156,21 +136,34 @@ public class AlgoRunner extends Application {
                 (param) ->
                     param.getValue().num_times.asObject()
         );
+        number_of_times.setPrefWidth(120);
 
-        TableColumn<MonteCarloResult, Double> approx_result = new TableColumn<>("Approx. Area");
+        TableColumn<MonteCarloResult, String> approx_result = new TableColumn<>("Approx. Area");
         approx_result.setCellValueFactory(
                 (param) ->
-                    param.getValue().approx_result.asObject()
-            );
+                    param.getValue().approx_result
+        );
+        approx_result.setPrefWidth(120);
 
         TableColumn<MonteCarloResult, Double> actual_result = new TableColumn<>("Exact Area");
         actual_result.setCellValueFactory(
                 (param) ->
                     param.getValue().equation.actual_area.asObject()
         );
+        actual_result.setPrefWidth(120);
+
+        TableColumn<MonteCarloResult, String> error_percent = new TableColumn<>("Error %");
+        error_percent.setCellValueFactory(
+                (param) ->
+                    param.getValue().error_percentage
+        );
+        error_percent.setPrefWidth(120);
 
         table.setItems(table_data);
-        table.getColumns().addAll(equation, number_of_times, approx_result, actual_result);
+        table.getColumns().addAll(equation, number_of_times, approx_result, actual_result, error_percent);
+
+        String css_file = this.getClass().getResource("styles/javafx-tables.css").toExternalForm();
+        table.getStylesheets().add(css_file);
 
         final VBox vbox = new VBox();
         vbox.setSpacing(100);
@@ -182,6 +175,7 @@ public class AlgoRunner extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
     private static final int[] number_of_elements = {1000, 10000, 100000, 1000000};
     private final TableView table = new TableView();
     private static ObservableList<MonteCarloResult> table_data = FXCollections.observableArrayList();

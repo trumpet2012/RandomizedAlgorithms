@@ -49,6 +49,18 @@ public class AlgoHelper {
         }
     }
 
+    public static int[] rand_array(int size){
+        int min_rand = 0;
+        int max_rand = 100000;
+
+        int[] arr = new int[size];
+        for (int i = 0; i < size; i++){
+            arr[i] = random_number(min_rand, max_rand);
+        }
+
+        return arr;
+    }
+
     public static int random_number(int min, int max){
         return ThreadLocalRandom.current().nextInt(min, max + 1);
     }

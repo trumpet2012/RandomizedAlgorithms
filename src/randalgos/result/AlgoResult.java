@@ -1,17 +1,20 @@
 package randalgos.result;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
+
 /**
  * William Trent Holliday
  * 9/26/15
  */
 public class AlgoResult {
-    public int number_of_items;
-    public long exec_time;
-    public Object result;
+    public SimpleIntegerProperty number_of_items;
+    public SimpleLongProperty exec_time;
+    public SimpleIntegerProperty result;
 
-    public AlgoResult(int number_of_items, long exec_time, Object result){
-        this.number_of_items = number_of_items;
-        this.exec_time = exec_time;
-        this.result = result;
+    public AlgoResult(int number_of_items, long exec_time, int result) {
+        this.number_of_items = new SimpleIntegerProperty(number_of_items);
+        this.exec_time = new SimpleLongProperty(exec_time);
+        this.result = new SimpleIntegerProperty(result);
     }
 }
