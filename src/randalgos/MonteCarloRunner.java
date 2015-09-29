@@ -3,9 +3,12 @@ package randalgos;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.Side;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -24,6 +27,7 @@ import randalgos.result.MonteCarloResult;
 import randalgos.utils.EquationImageBuilder;
 import randalgos.utils.table.EquationCell;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -33,7 +37,7 @@ import java.util.HashMap;
  */
 public class MonteCarloRunner {
 
-    private static void exec(){
+    private static ArrayList<MonteCarloResult> exec(){
         // Object that will be used to compute the area under the curves
         MonteCarlo monte_carlo = new MonteCarlo();
 
@@ -42,20 +46,20 @@ public class MonteCarloRunner {
                 new Equation("${\\tiny \\int_{0}^{5} x^{3}\\, dx}$", (625.0/4.0)) {
                     @Override
                     public double calculate(double x) {
-                        return Math.pow(x, 3);
+                        return Math.pow(x, 3.0);
                     }
 
                     @Override
                     public double x_max() {
-                        return 5;
+                        return 5.0;
                     }
 
                     @Override
                     public double y_max() {
-                        return 125;
+                        return 125.0;
                     }
                 },
-                new Equation("${\\tiny \\int_{1}^{10} \\ln{x}\\,dx}$", ((10.0 * Math.log(10)) - 9.0)) {
+                new Equation("${\\tiny \\int_{1}^{10} \\ln{x}\\,dx}$", ((10.0 * Math.log(10.0)) - 9.0)) {
                     @Override
                     public double calculate(double x) {
                         return Math.log(x);
@@ -63,7 +67,7 @@ public class MonteCarloRunner {
 
                     @Override
                     public double x_max() {
-                        return 10;
+                        return 10.0;
                     }
 
                     @Override
@@ -74,17 +78,17 @@ public class MonteCarloRunner {
                 new Equation("${\\tiny \\int_{0}^{2} x^{2} + \\sqrt[5]{x}\\, dx}$", 4.5812) {
                     @Override
                     public double calculate(double x) {
-                        return Math.pow(x, 2) + Math.pow(x, 1/5);
+                        return Math.pow(x, 2.0) + Math.pow(x, 1.0/5.0);
                     }
 
                     @Override
                     public double x_max() {
-                        return 2;
+                        return 2.0;
                     }
 
                     @Override
                     public double y_max() {
-                        return 4 + Math.pow(2, 1/5);
+                        return 4.0 + Math.pow(2.0, 1.0/5.0);
                     }
                 }
         };
@@ -98,18 +102,43 @@ public class MonteCarloRunner {
             }
         }
 
-        table_data.addAll(equation_results);
-
+        return equation_results;
     }
 
     public static void show(){
-        exec();
+        TableView table = new TableView();
+        ObservableList<MonteCarloResult> table_data = FXCollections.observableArrayList();
+
+        ArrayList<MonteCarloResult> monteCarloResults = exec();
+        table_data.addAll(monteCarloResults);
+        table.getItems().addAll(table_data);
 
         Stage monteCarloStage = new Stage();
         Scene scene = new Scene(new Group());
 
         TabPane tabPane = new TabPane();
+        tabPane.setPadding(new Insets(29, 0, 0, 0));
+        tabPane.setSide(Side.RIGHT);
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        tabPane.getSelectionModel().select(last_active_tab);
+
+        MenuBar menuBar = new MenuBar();
+        menuBar.autosize();
+        Menu file = new Menu("File");
+
+        MenuItem rerun = new MenuItem("Rerun");
+        rerun.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                last_active_tab = tabPane.getSelectionModel().getSelectedIndex();
+                monteCarloStage.close();
+                MonteCarloRunner.show();
+            }
+        });
+        file.getItems().addAll(rerun);
+
+        menuBar.getMenus().addAll(file);
+        menuBar.prefWidthProperty().bind(monteCarloStage.widthProperty());
 
         int width = 1200;
         int height = 850;
@@ -137,13 +166,14 @@ public class MonteCarloRunner {
 
         graphKey.setAlignment(Pos.CENTER);
 
-        populate_table();
-        populate_graph(graphKey);
+        LineChart graph = populate_graph(graphKey, table_data);
 
         graphPanel.setCenter(graph);
         graphPanel.setBottom(graphKey);
 
         Tab tableTab = new Tab("Table data");
+        TableColumn[] tableColumns = populate_table(table);
+        table.getColumns().addAll(tableColumns);
         tableTab.setContent(table);
 
         Tab graphTab = new Tab("Graph");
@@ -151,8 +181,7 @@ public class MonteCarloRunner {
 
         tabPane.getTabs().addAll(tableTab, graphTab);
 
-        ((Group) scene.getRoot()).getChildren().addAll(tabPane);
-
+        ((Group) scene.getRoot()).getChildren().addAll(tabPane, menuBar);
         monteCarloStage.setScene(scene);
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         monteCarloStage.setX((screenBounds.getWidth() - monteCarloStage.getWidth()) / 2);
@@ -160,7 +189,7 @@ public class MonteCarloRunner {
         monteCarloStage.show();
     }
 
-    private static void populate_table(){
+    private static TableColumn[] populate_table(TableView table){
         TableColumn<MonteCarloResult, String> equation = new TableColumn<>("Equation");
         equation.setCellValueFactory(
                 (param) ->
@@ -199,18 +228,18 @@ public class MonteCarloRunner {
         );
         error_percent.setPrefWidth(120);
 
-        table.setItems(table_data);
-        table.getColumns().addAll(equation, number_of_times, approx_result, actual_result, error_percent);
-
         String css_file = MonteCarloRunner.class.getResource("styles/javafx-tables.css").toExternalForm();
         table.getStylesheets().add(css_file);
+
+        TableColumn[] table_columns = {equation, number_of_times, approx_result, actual_result, error_percent};
+        return table_columns;
     }
 
     private static String create_formatted_string(Double number){
         return String.format("%.4f", number);
     }
 
-    private static void populate_graph(FlowPane graphKey){
+    private static LineChart populate_graph(FlowPane graphKey, ObservableList<MonteCarloResult> table_data){
         final NumberAxis xAxis = new NumberAxis();
         xAxis.setAutoRanging(true);
         xAxis.setForceZeroInRange(false);
@@ -236,7 +265,7 @@ public class MonteCarloRunner {
             equation_count++;
         }
 
-        graph = errorPercentageChart;
+        return errorPercentageChart;
     }
 
     private static Node createEquationKey(XYChart.Series series, Equation equation, int equation_count){
@@ -300,7 +329,5 @@ public class MonteCarloRunner {
     }
 
     private static final int[] number_of_elements = {1000, 10000, 100000, 1000000};
-    private static final TableView table = new TableView();
-    private static LineChart graph;
-    private static ObservableList<MonteCarloResult> table_data = FXCollections.observableArrayList();
+    private static int last_active_tab;
 }
