@@ -174,7 +174,7 @@ public class MonteCarloRunner {
         graphPanel.setCenter(graph);
         graphPanel.setBottom(graphKey);
 
-        Tab tableTab = new Tab("Table data");
+        Tab tableTab = new Tab("Table");
 
         // Create the table columns
         TableColumn[] tableColumns = create_table_columns();
