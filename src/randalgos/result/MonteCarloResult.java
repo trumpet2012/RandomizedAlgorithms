@@ -37,7 +37,7 @@ public class MonteCarloResult {
     }
 
     private double calculate_error(double actual_area, double approx_result){
-        return ((Math.abs(actual_area - approx_result)) / Math.abs(actual_area)) * 100;
+        return ((Math.abs(approx_result - actual_area)) / Math.abs(actual_area)) * 100;
     }
 
 }

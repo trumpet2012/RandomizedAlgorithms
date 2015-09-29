@@ -39,7 +39,7 @@ public class MonteCarloRunner {
 
         // The list of equations to perform the monte carlo method on to get the approximate area under the curve.
         Equation[] equation_list = {
-                new Equation("${\\tiny \\int_{0}^{5} x^{3}\\, dx}$", 156.25) {
+                new Equation("${\\tiny \\int_{0}^{5} x^{3}\\, dx}$", (625.0/4.0)) {
                     @Override
                     public double calculate(double x) {
                         return Math.pow(x, 3);
@@ -55,7 +55,7 @@ public class MonteCarloRunner {
                         return 125;
                     }
                 },
-                new Equation("${\\tiny \\int_{1}^{10} \\ln{x}\\,dx}$", 14.026) {
+                new Equation("${\\tiny \\int_{1}^{10} \\ln{x}\\,dx}$", ((10.0 * Math.log(10)) - 9.0)) {
                     @Override
                     public double calculate(double x) {
                         return Math.log(x);
@@ -111,8 +111,8 @@ public class MonteCarloRunner {
         TabPane tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
-        int width = 800;
-        int height = 650;
+        int width = 1200;
+        int height = 850;
 
         monteCarloStage.setTitle("Monte Carlo Algorithm - Area Under Curve");
 
@@ -185,19 +185,17 @@ public class MonteCarloRunner {
         );
         approx_result.setPrefWidth(120);
 
-        TableColumn<MonteCarloResult, Double> actual_result = new TableColumn<>("Exact Area");
+        TableColumn<MonteCarloResult, String> actual_result = new TableColumn<>("Exact Area");
         actual_result.setCellValueFactory(
                 (param) ->
-                        param.getValue().equation.actual_area.asObject()
+                        new SimpleStringProperty(create_formatted_string(param.getValue().equation.actual_area.getValue()))
         );
         actual_result.setPrefWidth(120);
 
         TableColumn<MonteCarloResult, String> error_percent = new TableColumn<>("Error %");
         error_percent.setCellValueFactory(
-                (param) -> {
-                    SimpleStringProperty property = new SimpleStringProperty(String.format("%.4f", param.getValue().error_percentage.getValue()));
-                    return property;
-                }
+                (param) ->
+                        new SimpleStringProperty(create_formatted_string(param.getValue().error_percentage.getValue()))
         );
         error_percent.setPrefWidth(120);
 
@@ -208,6 +206,10 @@ public class MonteCarloRunner {
         table.getStylesheets().add(css_file);
     }
 
+    private static String create_formatted_string(Double number){
+        return String.format("%.4f", number);
+    }
+
     private static void populate_graph(FlowPane graphKey){
         final NumberAxis xAxis = new NumberAxis();
         xAxis.setAutoRanging(true);
@@ -216,7 +218,7 @@ public class MonteCarloRunner {
         xAxis.setLabel("Number of Guesses");
         yAxis.setLabel("Error Percentage (%)");
 
-        final LineChart<Number, Number> errorPercentageChart = new LineChart<Number, Number>(xAxis, yAxis);
+        final LineChart<Number, Number> errorPercentageChart = new LineChart<>(xAxis, yAxis);
         errorPercentageChart.setTitle("Error Percentage Per Equation");
         int equation_count = 1;
         HashMap<Equation, ArrayList<HashMap<Integer, MonteCarloResult>>> equation_groups = create_equation_groups(table_data);
