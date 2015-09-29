@@ -27,9 +27,7 @@ import randalgos.result.MonteCarloResult;
 import randalgos.utils.EquationImageBuilder;
 import randalgos.utils.table.EquationCell;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * William Trent Holliday
@@ -172,7 +170,10 @@ public class MonteCarloRunner {
         graphPanel.setBottom(graphKey);
 
         Tab tableTab = new Tab("Table data");
+
+        // Create the table columns
         TableColumn[] tableColumns = populate_table(table);
+
         table.getColumns().addAll(tableColumns);
         tableTab.setContent(table);
 
@@ -250,7 +251,7 @@ public class MonteCarloRunner {
         final LineChart<Number, Number> errorPercentageChart = new LineChart<>(xAxis, yAxis);
         errorPercentageChart.setTitle("Error Percentage Per Equation");
         int equation_count = 1;
-        HashMap<Equation, ArrayList<HashMap<Integer, MonteCarloResult>>> equation_groups = create_equation_groups(table_data);
+        LinkedHashMap<Equation, ArrayList<HashMap<Integer, MonteCarloResult>>> equation_groups = create_equation_groups(table_data);
         for(Equation equation : equation_groups.keySet()) {
             ArrayList<HashMap<Integer, MonteCarloResult>> equation_dict_list = equation_groups.get(equation);
             XYChart.Series series = new XYChart.Series();
@@ -284,10 +285,10 @@ public class MonteCarloRunner {
         return equation_tile;
     }
 
-    private static HashMap<Equation, ArrayList<HashMap<Integer, MonteCarloResult>>> create_equation_groups(ObservableList<MonteCarloResult> table_data){
+    private static LinkedHashMap<Equation, ArrayList<HashMap<Integer, MonteCarloResult>>> create_equation_groups(ObservableList<MonteCarloResult> table_data){
         ArrayList<Equation> equations = get_equations(table_data);
 
-        HashMap<Equation, ArrayList<HashMap<Integer, MonteCarloResult>>> equation_dict = new HashMap<>();
+        LinkedHashMap<Equation, ArrayList<HashMap<Integer, MonteCarloResult>>> equation_dict = new LinkedHashMap<>();
         for(int index = 0; index< equations.size(); index++){
             Equation equation = equations.get(index);
 
@@ -311,7 +312,8 @@ public class MonteCarloRunner {
 
     private static boolean is_in(ArrayList<HashMap<Integer, MonteCarloResult>> equation_dict_list, HashMap<Integer, MonteCarloResult> result_dict){
         for(HashMap<Integer, MonteCarloResult> map: equation_dict_list){
-            if(map.containsKey(result_dict.keySet().toArray()[0])){
+            Object[] result_key_array = result_dict.keySet().toArray();
+            if(map.containsKey(result_key_array[0])){
                 return true;
             }
         }
