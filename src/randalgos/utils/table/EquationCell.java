@@ -8,6 +8,7 @@ import javafx.scene.layout.VBox;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import randalgos.result.MonteCarloResult;
+import randalgos.utils.EquationImageBuilder;
 
 import java.awt.*;
 
@@ -34,11 +35,8 @@ public class EquationCell extends TableCell<MonteCarloResult, String> {
 
     @Override
     public void updateItem(String math, boolean empty){
-        if (math != null){
-            String file_name = "/home/trent/IdeaProjects/RandomizedAlgorithms/src/" + math + "_image.png";
-            TeXFormula formula = new TeXFormula(math);
-            formula.createPNG(TeXConstants.UNIT_MU, 100, file_name, new Color(255, 255, 255, 255), Color.black);
-            mathImage.setImage(new javafx.scene.image.Image("file:" + file_name));
+        if (math != null) {
+            mathImage.setImage(EquationImageBuilder.create_image(math));
         }
     }
 }
